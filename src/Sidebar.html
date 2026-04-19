@@ -4,21 +4,28 @@
 <head>
     <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
     <style>
-        .toolbar {
-            display: flex;
-            gap: 5px;
-            margin: 10px 0;
-            padding: 5px;
-            background: #f8f9fa;
-            border-bottom: 1px solid #ddd;
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', Arial, sans-serif;
+        }
+
+        .sidebar-body {
+            padding: 12px;
         }
 
         .tool-btn {
-            padding: 5px 10px;
+            padding: 6px 10px;
             cursor: pointer;
             border: 1px solid transparent;
             background: none;
             font-weight: bold;
+            font-size: 13px;
+            border-radius: 3px;
         }
 
         .tool-btn:hover {
@@ -30,35 +37,247 @@
             color: #1a73e8;
             border: 1px solid #1a73e8;
         }
+
+        .section {
+            margin-bottom: 14px;
+            padding: 0;
+        }
+
+        .section-title {
+            font-size: 11px;
+            color: #5f6368;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 7px 10px;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            font-size: 12px;
+            font-family: inherit;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #1a73e8;
+            box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.15);
+        }
+
+        .match-info {
+            font-size: 11px;
+            color: #5f6368;
+            padding: 4px 8px;
+            background: #f8f9fa;
+            border-radius: 3px;
+            min-width: 45px;
+            text-align: center;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .nav-buttons button {
+            flex: 1;
+            padding: 6px 8px;
+            border: 1px solid #dadce0;
+            background: #f8f9fa;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+            color: #5f6368;
+        }
+
+        .nav-buttons button:hover {
+            background: #efefef;
+        }
+
+        .format-panel {
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            padding: 10px;
+            background: #fafbfc;
+            margin-bottom: 12px;
+        }
+
+        .format-buttons {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .format-buttons button {
+            padding: 6px 9px;
+            border: 1px solid #dadce0;
+            background: white;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .format-buttons button:hover {
+            background: #f8f9fa;
+        }
+
+        .format-buttons button.active {
+            background: #e8f0fe;
+            color: #1a73e8;
+            border-color: #1a73e8;
+        }
+
+        .format-buttons input[type="color"] {
+            width: 34px;
+            height: 30px;
+            border: 1px solid #dadce0;
+            border-radius: 3px;
+            cursor: pointer;
+            padding: 1px;
+        }
+
+        .action {
+            padding: 7px 14px;
+            background: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 12px;
+            width: 100%;
+            margin-bottom: 6px;
+        }
+
+        .action:hover {
+            background: #1557b0;
+        }
+
+        .action.secondary {
+            background: #f8f9fa !important;
+            color: #3c4043 !important;
+            border: 1px solid #dadce0;
+        }
+
+        .action.secondary:hover {
+            background: #f0f0f0 !important;
+        }
+
+        .action.small {
+            width: auto;
+            display: inline-block;
+            padding: 6px 12px;
+            margin: 0;
+            font-size: 11px;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #dadce0;
+            margin: 10px 0;
+        }
+
+        #results {
+            padding: 8px 0;
+            font-size: 11px;
+        }
+
+        #results h4 {
+            margin: 8px 0 6px 0;
+            font-size: 12px;
+            color: #202124;
+        }
+
+        #results p {
+            margin: 4px 0;
+            color: #5f6368;
+        }
+
+        #results div {
+            margin-bottom: 6px;
+            word-break: break-word;
+        }
+
+        #results a {
+            color: #1a73e8;
+            text-decoration: none;
+        }
+
+        #results a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 
 <body>
+<body>
     <div class="sidebar-body">
-        <div style="display:flex; gap:6px; align-items:center; margin-bottom:8px;">
-            <input type="text" id="searchTerm" placeholder="Search and Format..." style="flex:1;">
-            <button class="tool-btn" onclick="searchMatches()">🔎</button>
+        <!-- Search Section -->
+        <div class="section">
+            <div class="section-title">Find & Replace</div>
+            <div class="search-box">
+                <input type="text" id="searchTerm" placeholder="Search term...">
+                <div class="match-info" id="matchCount">0 of 0</div>
+            </div>
+            <input type="text" id="replaceTerm" placeholder="Replace with..." style="width: 100%; padding: 7px 10px; border: 1px solid #dadce0; border-radius: 4px; font-size: 12px; margin-bottom: 8px;">
+            <div class="nav-buttons">
+                <button onclick="previousMatch()">↑ Prev</button>
+                <button onclick="nextMatch()">↓ Next</button>
+            </div>
+            <div class="nav-buttons" style="margin-top: 6px;">
+                <button onclick="replaceCurrentMatch()" style="flex: 1; padding: 6px 8px; border: 1px solid #dadce0; background: #fff8e1; border-radius: 3px; cursor: pointer; font-size: 11px; color: #f57f17;">Replace</button>
+                <button onclick="replaceAllMatches()" style="flex: 1; padding: 6px 8px; border: 1px solid #dadce0; background: #ffebee; border-radius: 3px; cursor: pointer; font-size: 11px; color: #c62828;">Replace All</button>
+            </div>
         </div>
-        <div id="searchSummary" style="font-size:12px; color:#5f6368; margin-bottom:10px;"></div>
 
-        <div class="toolbar">
-            <button class="tool-btn" id="btnBold" onclick="toggleStyle('bold')">B</button>
-            <button class="tool-btn" id="btnItalic" onclick="toggleStyle('italic')"><em>I</em></button>
-            <button class="tool-btn" id="btnHighlight" onclick="toggleStyle('highlight')">H</button>
-            <input type="color" id="highlightColor" title="Highlighter Color" value="#ffff00" disabled style="opacity:.65;">
+        <!-- Format Options -->
+        <div class="section">
+            <div class="section-title">Format</div>
+            <div class="format-panel">
+                <div class="format-buttons">
+                    <button class="tool-btn" id="btnBold" onclick="toggleStyle('bold')">B</button>
+                    <button class="tool-btn" id="btnItalic" onclick="toggleStyle('italic')"><em>I</em></button>
+                    <button class="tool-btn" id="btnHighlight" onclick="toggleStyle('highlight')">H</button>
+                    <input type="color" id="highlightColor" title="Highlight Color" value="#ffff00" disabled>
+                </div>
+            </div>
         </div>
 
-        <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px;">
-            <button class="action" onclick="runLumina()">Format All Matches</button>
+        <!-- Action Buttons -->
+        <div class="section">
+            <div class="nav-buttons">
+                <button onclick="formatCurrentMatch()" style="flex: 1; padding: 6px 8px; border: 1px solid #1a73e8; background: #e8f0fe; border-radius: 3px; cursor: pointer; font-size: 11px; color: #1a73e8;">Format This</button>
+                <button onclick="formatAllMatches()" style="flex: 1; padding: 6px 8px; border: 1px solid #1a73e8; background: #1a73e8; color: white; border-radius: 3px; cursor: pointer; font-size: 11px;">Format All</button>
+            </div>
             <button class="action secondary" onclick="undoLastChange()">Undo</button>
         </div>
+
         <hr>
-        <button class="secondary" onclick="checkLinks()">Check URL Health</button>
-        <div id="results"></div>
+
+        <!-- Link Checker -->
+        <div class="section">
+            <button class="action secondary" style="width: 100%;" onclick="checkLinks()">Check URL Health</button>
+            <div id="results"></div>
+        </div>
     </div>
 
     <script>
         let currentConfig = { bold: false, italic: false, highlight: false };
+        let searchState = { keyword: '', currentIndex: 0, totalMatches: 0 };
 
         function toggleStyle(prop) {
             currentConfig[prop] = !currentConfig[prop];
@@ -75,44 +294,106 @@
             }
         }
 
-        // --- FEATURE 1: FORMATTING ---
-        function runLumina() {
+        function updateMatchCount() {
+            const display = searchState.totalMatches === 0 ? '0 of 0' : `${searchState.currentIndex + 1} of ${searchState.totalMatches}`;
+            document.getElementById('matchCount').innerText = display;
+        }
+
+        function findMatches() {
             const term = document.getElementById('searchTerm').value;
-            if (!term) {
+            if (!term.trim()) {
+                document.getElementById('matchCount').innerText = '0 of 0';
+                return;
+            }
+
+            searchState.keyword = term;
+            searchState.currentIndex = 0;
+            google.script.run
+                .withSuccessHandler(count => {
+                    searchState.totalMatches = count;
+                    updateMatchCount();
+                    if (count > 0) nextMatch();
+                })
+                .countMatches(term);
+        }
+
+        function nextMatch() {
+            if (searchState.totalMatches === 0) return;
+            searchState.currentIndex = (searchState.currentIndex + 1) % searchState.totalMatches;
+            updateMatchCount();
+            google.script.run.highlightMatch(searchState.keyword, searchState.currentIndex);
+        }
+
+        function previousMatch() {
+            if (searchState.totalMatches === 0) return;
+            searchState.currentIndex = (searchState.currentIndex - 1 + searchState.totalMatches) % searchState.totalMatches;
+            updateMatchCount();
+            google.script.run.highlightMatch(searchState.keyword, searchState.currentIndex);
+        }
+
+        function formatAllMatches() {
+            const term = document.getElementById('searchTerm').value;
+            if (!term.trim()) {
                 alert("Please enter a search term.");
+                return;
+            }
+
+            // Check if at least one format option is selected
+            if (!currentConfig.bold && !currentConfig.italic && !currentConfig.highlight) {
+                alert("Please select at least one format option (B, I, or H).");
                 return;
             }
 
             const config = { ...currentConfig };
             if (config.highlight) {
-                config.highlight = document.getElementById('highlightColor').value;
+                const colorValue = document.getElementById('highlightColor').value;
+                config.highlight = colorValue;
             }
-
+            
             google.script.run
-                .withSuccessHandler(() => alert('Style applied to all matches!'))
+                .withSuccessHandler(() => {
+                    alert('All matches formatted!');
+                })
+                .withFailureHandler(err => {
+                    alert('Error formatting matches: ' + err);
+                })
                 .applyBatchStyle(term, config);
         }
 
-        function searchMatches() {
+        function formatCurrentMatch() {
             const term = document.getElementById('searchTerm').value;
-            if (!term) {
+            if (!term.trim()) {
                 alert("Please enter a search term.");
                 return;
             }
 
-            document.getElementById('searchSummary').innerText = 'Searching...';
-            google.script.run
-                .withSuccessHandler(updateSearchSummary)
-                .withFailureHandler(err => {
-                    document.getElementById('searchSummary').innerText = 'Search failed';
-                    alert('Search failed: ' + err.message);
-                })
-                .countMatches(term);
-        }
+            if (searchState.totalMatches === 0) {
+                alert("No matches found. Please search first.");
+                return;
+            }
 
-        function updateSearchSummary(count) {
-            const summary = document.getElementById('searchSummary');
-            summary.innerText = count === 0 ? 'No matches found.' : `${count} match${count === 1 ? '' : 'es'} found.`;
+            // Check if at least one format option is selected
+            if (!currentConfig.bold && !currentConfig.italic && !currentConfig.highlight) {
+                alert("Please select at least one format option (B, I, or H).");
+                return;
+            }
+
+            const config = { ...currentConfig };
+            if (config.highlight) {
+                const colorValue = document.getElementById('highlightColor').value;
+                config.highlight = colorValue;
+            }
+
+            google.script.run
+                .withSuccessHandler(() => {
+                    alert('Match formatted!');
+                    // Move to next match after formatting
+                    nextMatch();
+                })
+                .withFailureHandler(err => {
+                    alert('Error formatting match: ' + err);
+                })
+                .formatMatchAtIndex(term, searchState.currentIndex, config);
         }
 
         function undoLastChange() {
@@ -122,7 +403,47 @@
                 .undoLastBatchStyle();
         }
 
-        // --- FEATURE 2: LINK CHECKER ---
+        function replaceCurrentMatch() {
+            const searchTerm = document.getElementById('searchTerm').value;
+            const replaceTerm = document.getElementById('replaceTerm').value;
+            
+            if (!searchTerm.trim()) {
+                alert("Please enter a search term.");
+                return;
+            }
+
+            google.script.run
+                .withSuccessHandler(() => {
+                    alert('Match replaced!');
+                    // Move to next match after replace
+                    nextMatch();
+                })
+                .replaceCurrentMatch(searchTerm, replaceTerm, searchState.currentIndex);
+        }
+
+        function replaceAllMatches() {
+            const searchTerm = document.getElementById('searchTerm').value;
+            const replaceTerm = document.getElementById('replaceTerm').value;
+            
+            if (!searchTerm.trim()) {
+                alert("Please enter a search term.");
+                return;
+            }
+
+            if (!confirm(`Replace all occurrences of "${searchTerm}"?`)) {
+                return;
+            }
+
+            google.script.run
+                .withSuccessHandler(count => {
+                    alert(`Replaced ${count} occurrence${count === 1 ? '' : 's'}!`);
+                    // Reset search
+                    document.getElementById('searchTerm').value = '';
+                    document.getElementById('matchCount').innerText = '0 of 0';
+                })
+                .replaceAllMatches(searchTerm, replaceTerm);
+        }
+
         function checkLinks() {
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = "<p style='color: gray;'>Checking links... please wait.</p>";
@@ -132,15 +453,12 @@
                     let html = "<h4>Link Health Report:</h4>";
 
                     if (typeof results === 'string') {
-                        html += `<p>${results}</p>`; // Handles "No links found"
+                        html += `<p>${results}</p>`;
                     } else {
                         results.forEach(res => {
-                            const color = res.isBroken ? "#d93025" : "#188038"; // Red vs Green
+                            const color = res.isBroken ? "#d93025" : "#188038";
                             const icon = res.isBroken ? "❌" : "✅";
-                            html += `<div style="margin-bottom: 8px; font-size: 11px;">
-                      ${icon} <span style="color:${color}; font-weight:bold;">${res.status}</span>: 
-                      <a href="${res.url}" target="_blank">${res.url.substring(0, 30)}...</a>
-                    </div>`;
+                            html += `<div>${icon} <span style="color:${color}; font-weight:bold;">${res.status}</span>: <a href="${res.url}" target="_blank">${res.url.substring(0, 30)}...</a></div>`;
                         });
                     }
                     resultsDiv.innerHTML = html;
@@ -148,8 +466,11 @@
                 .withFailureHandler(function (err) {
                     resultsDiv.innerHTML = "<p style='color: red;'>Error: " + err + "</p>";
                 })
-                .checkDocumentLinks(); // This calls the function in your LinkChecker.ts
+                .checkDocumentLinks();
         }
+
+        // Listen for search term changes
+        document.getElementById('searchTerm').addEventListener('input', findMatches);
     </script>
 
 </body>
