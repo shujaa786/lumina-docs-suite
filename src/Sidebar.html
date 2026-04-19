@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+    <style>
+        .toolbar {
+            display: flex;
+            gap: 5px;
+            margin: 10px 0;
+            padding: 5px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tool-btn {
+            padding: 5px 10px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            background: none;
+            font-weight: bold;
+        }
+
+        .tool-btn:hover {
+            background: #eee;
+        }
+
+        .tool-btn.active {
+            background: #e8f0fe;
+            color: #1a73e8;
+            border: 1px solid #1a73e8;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar-body">
+        <input type="text" id="searchTerm" placeholder="Search and Format..." style="width:100%">
+
+        <div class="toolbar">
+            <button class="tool-btn" id="btnBold" onclick="toggleStyle('bold')">B</button>
+            <input type="color" id="highlight" title="Highlighter" value="#ffff00">
+        </div>
+
+        <button class="action" onclick="runLumina()">Format All Matches</button>
+        <hr>
+        <button class="secondary" onclick="checkLinks()">Check URL Health</button>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        let currentConfig = { bold: false };
+
+        function toggleStyle(prop) {
+            currentConfig[prop] = !currentConfig[prop];
+            const btnId = 'btn' + prop.charAt(0).toUpperCase() + prop.slice(1);
+            const btn = document.getElementById(btnId);
+            if (btn) btn.classList.toggle('active');
+        }
+
+        // --- FEATURE 1: FORMATTING ---
+        function runLumina() {
+            const term = document.getElementById('searchTerm').value;
+            if (!term) {
+                alert("Please enter a search term.");
+                return;
+            }
+            currentConfig.highlight = document.getElementById('highlight').value;
+
+            google.script.run
+                .withSuccessHandler(() => alert('Style applied to all matches!'))
+                .applyBatchStyle(term, currentConfig);
+        }
+
+        // --- FEATURE 2: LINK CHECKER ---
+        function checkLinks() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = "<p style='color: gray;'>Checking links... please wait.</p>";
+
+            google.script.run
+                .withSuccessHandler(function (results) {
+                    let html = "<h4>Link Health Report:</h4>";
+
+                    if (typeof results === 'string') {
+                        html += `<p>${results}</p>`; // Handles "No links found"
+                    } else {
+                        results.forEach(res => {
+                            const color = res.isBroken ? "#d93025" : "#188038"; // Red vs Green
+                            const icon = res.isBroken ? "❌" : "✅";
+                            html += `<div style="margin-bottom: 8px; font-size: 11px;">
+                      ${icon} <span style="color:${color}; font-weight:bold;">${res.status}</span>: 
+                      <a href="${res.url}" target="_blank">${res.url.substring(0, 30)}...</a>
+                    </div>`;
+                        });
+                    }
+                    resultsDiv.innerHTML = html;
+                })
+                .withFailureHandler(function (err) {
+                    resultsDiv.innerHTML = "<p style='color: red;'>Error: " + err + "</p>";
+                })
+                .checkDocumentLinks(); // This calls the function in your LinkChecker.ts
+        }
+    </script>
+
+</body>
+
+</html>
